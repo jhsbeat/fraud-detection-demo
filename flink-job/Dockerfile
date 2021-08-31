@@ -7,10 +7,20 @@ COPY gradle gradle
 # To cause download and cache of verifyGoogleJavaFormat dependency
 RUN echo "class Dummy {}" > Dummy.java
 # download dependencies
-RUN ./gradlew build
+# RUN curl --insecure -L https://services.gradle.org/distributions/gradle-4.4-all.zip -o gradle-4.4-all.zip
+
+RUN curl --insecure -L https://services.gradle.org/distributions/gradle-4.4-all.zip -o gradle-4.4-all.zip
+RUN unzip gradle-4.4-all.zip
+ENV GRADLE_HOME=/home/gradle/app/gradle-4.4
+ENV PATH=$PATH:$GRADLE_HOME/bin
+RUN gradle --version
+
+RUN gradle build
+# RUN ./gradlew build
 COPY . .
 RUN rm Dummy.java
-RUN ./gradlew build
+RUN gradle build
+# RUN ./gradlew build
 RUN mv /home/gradle/app/build/libs/dynamic-fraud-detection-demo*-deploy.jar /home/gradle/app/build/libs/dynamic-fraud-detection-demo-deploy.jar
 
 # ---
